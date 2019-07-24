@@ -6,25 +6,12 @@ import terrinus
 import u_net
 import softmax_nllloss
 import os
-def train_model(model, num_epochs, dataloader_train, criterion, optimizer, dataloader_val=None):
-    train_loss = []
-    for epoch in range(0,num_epochs):
-        print("Epoch number {}/{}".format(epoch, num_epochs))
-        loss = 0.0
-        # Load data
-        for inputs, labels in dataloader_train:
-            running_loss = 0.0
-            optimizer.zero_grad()
-            print(inputs.size())
-            print(labels.size())
-            out = model(inputs)
-            running_loss = criterion(out, labels.long())
-            running_loss.backward()
-            optimizer.step()
-            loss += running_loss
-        print("Loss: {:.4f}".format(loss))  
-        print("Saving model...")
-        torch.save(model.state_dict(), os.path.join(save_dir,"unet_{:.4f}".format(loss)))
+import matplotlib.pyplot as plt
+import numpy as np
+def visualize_prediction(pred, color_code):
+    # Input is 1*W*H*C, take the maximum and assign color code
+    out_np = pred.numpy()
+    mask = np.zeros()
 
 # Define directories
 train_dir_imgs = 'C:/Users/user/Ponc/terrinus/annotation/train_overfit/'

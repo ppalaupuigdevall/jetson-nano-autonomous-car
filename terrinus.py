@@ -20,14 +20,14 @@ class TerrinusDataset(data.Dataset):
     def fetch_mask(self, mask, color_code=[0,64,128,255], mask_tensor=False):
         mask = np.array(mask)
         if(mask_tensor):
-            # Load mask of W*H*C
+            # Load mask of W*H*C (Regression)
             mask_np = np.zeros((np.shape(mask)[0], np.shape(mask)[1], self.C), dtype=np.float32)
             
             for i, c in enumerate(color_code):
                 pstns = np.where(mask == c)
                 mask_np[pstns[0], pstns[1], i] = 1
         else:
-            # Load mask of W*H containing the class number in each position
+            # Load mask of W*H containing the class number in each position (Cross Entropy)
             mask_np = np.zeros((np.shape(mask)[0],np.shape(mask)[1]), dtype= np.float64)
             for i,c in enumerate(color_code):
                 pstns = np.where(mask == c)
