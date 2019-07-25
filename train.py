@@ -46,9 +46,9 @@ num_classes = 4
 unet = u_net.UNet(num_classes = 4)
 out = unet(ex_batch[0])
 # Compute LogSoftmax in the pixel (channel) dimension
-logsoft = torch.nn.LogSoftmax(dim=1)
+soft = torch.nn.Softmax(dim=1)
 nlll = torch.nn.NLLLoss()
-lsm = logsoft(out)
+lsm = soft(out)
 print(lsm[0,:,0,0])
 loss = nlll(lsm, ex_batch[1].long())
 print(loss)
@@ -59,4 +59,4 @@ soft_nlll = softmax_nllloss.SoftMax_NLLL()
 laloss = soft_nlll.forward(out, ex_batch[1].long())
 print(laloss)
 
-train_model(unet, 20, dataloader_train, soft_nlll, optimizer)
+train_model(unet, 5, dataloader_train, soft_nlll, optimizer)
