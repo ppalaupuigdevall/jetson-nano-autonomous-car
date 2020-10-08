@@ -77,8 +77,8 @@ T = np.array([[0.0],[-0.156],[0.0]]) # WCS expressed in camera coordinate system
 Rt = np.hstack((R,T))
 
 xworld = 0.6
-yworld = -0.16
-lengthx = 1.0
+yworld = -0.32
+lengthx = 3.23
 lengthy = 2*-1*yworld
 # TODO: Define this according to lengthx and lengthy
 Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld, xworld          ], \
@@ -87,7 +87,7 @@ Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld, xworld          ], \
                [1.0             , 1.0             , 1.0   , 1.0             ]])
 
 print(Xw)
-img_path = "C:/Users/user/Ponc/terrinus/train/28.jpeg"
+img_path = "C:/Users/user/Ponc/terrinus/train/37.jpeg"
 img = cv2.imread(img_path)
 print(img.shape)
 xp = np.zeros((2,4))
