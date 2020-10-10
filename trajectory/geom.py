@@ -77,12 +77,12 @@ T = np.array([[0.0],[-0.156],[0.0]]) # WCS expressed in camera coordinate system
 Rt = np.hstack((R,T))
 
 xworld = 0.6
-yworld = -0.32
-lengthx = 3.23
-lengthy = 2*-1*yworld
+yworld = +0.25
+lengthx = 1.0
+lengthy = 2*yworld
 # TODO: Define this according to lengthx and lengthy
-Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld, xworld          ], \
-               [yworld + lengthy, yworld          , yworld, yworld + lengthy], \
+Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld,           xworld],\
+               [yworld,           yworld - lengthy, yworld - lengthy, yworld],\
                [0.0             , 0.0             , 0.0   , 0.0             ],\
                [1.0             , 1.0             , 1.0   , 1.0             ]])
 
@@ -91,17 +91,44 @@ img_path = "C:/Users/user/Ponc/terrinus/train/37.jpeg"
 img = cv2.imread(img_path)
 print(img.shape)
 xp = np.zeros((2,4))
+colors = [(255,255,255),(255,0,0),(0,255,0),(0,0,255)]
+
+num_x = 4
+num_y = 4
+grid_points = np.zeros((4,num_x*num_y))
+grid_points[3,:] = 1.0
+for a in range(num_x * num_y):
+    i = a//num_y
+    j = a%num_y
+    print(i,j)
+    x = xworld + lengthx - ((i/num_x)*lengthx)
+    y = yworld - ((j/(num_y-1))*lengthy)
+    print(x,y)
+    grid_points[0, a] = x
+    grid_points[1, a] = y
+
+print(grid_points[:2,:4])
+for i in range(num_x*num_y):
+    pccg = np.matmul(Rt,grid_points[:,i])
+    ximg_g = np.matmul(K,pccg)
+    ximg_g = ximg_g[:2]/ximg_g[2]
+    cv2.circle(img,(int(ximg_g[0]), int(ximg_g[1])), 5, (0,255,0))
+    print(ximg_g)
+
 for i in range(4):
     pcc = np.matmul(Rt,Xw[:,i])
     ximg = np.matmul(K, pcc)
     ximg = ximg[:2]/ximg[2]
-    cv2.circle(img,(int(ximg[0]), int(ximg[1])), 5,(0,0,255))
+    cv2.circle(img,(int(ximg[0]), int(ximg[1])), 5, colors[i])
     print("Point in image = (", int(ximg[0]), ", ", int(ximg[1]), ")")
     xp[:,i] = np.array([int(ximg[0]),int(ximg[1])])
+
+
 cv2.imshow('a', img)
 cv2.waitKey(0)
 
-
 BEV_img = four_point_transform(img, xp)
 cv2.imshow('BEV', BEV_img)
+# cv2.imwrite(r'C:\Users\user\Ponc\terrinus\grid.jpeg', img)
+# cv2.imwrite(r'C:\Users\user\Ponc\terrinus\grid_BEV.jpeg', BEV_img)
 cv2.waitKey(0)

@@ -4,7 +4,6 @@ import numpy as np
 
 class Terrinus:
     
-    
     def __init__(self, camera, processing_unit, mapper, controller):
         self.camera = camera
         self.processing_unit = processing_unit
@@ -16,7 +15,7 @@ class Terrinus:
         mask = self.processing_unit.segment()
 
         return mask
-    
+
     
     def create_map(self):
         map = None
