@@ -7,6 +7,11 @@
 
 ![GitHub Logo](/imgs/grid_BEV.jpeg)
 
+#### Trajectory Estimation
+
+![GitHub Logo](/imgs/grid_BEV_trajectory.jpeg)
+
+![GitHub Logo](/imgs/grid_img_trajectory.jpeg)
 
 ## Enllaços per fer memòria 
 (Pull-up res)
