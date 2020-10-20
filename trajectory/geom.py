@@ -211,4 +211,4 @@ for c in candidates_each_row:
         cv2.circle(img,(int(c[0]), int(c[1])), 7, (0,0,255))
 cv2.imshow('asdffdf', img)
 cv2.waitKey(0)
-cv2.imwrite("./../imgs/grid_img_trajectory.jpeg", BEV_img)
+cv2.imwrite("./../imgs/grid_img_trajectory.jpeg", img)
