@@ -31,8 +31,8 @@ class GeomPU:
         grid_points = np.zeros((4,self._num_x*self._num_y))
         grid_points[3,:] = 1.0
         for a in range(self._num_x * self._num_y):
-            i = a//num_y
-            j = a%num_y
+            i = a//self._num_y
+            j = a%self._num_y
             x = self._xw + self._length_x - ((i/(self._num_x-1))*self._length_x)
             y = self._yw - ((j/(self._num_y-1))*self._length_y)
             grid_points[0, a] = x
@@ -49,6 +49,7 @@ class GeomPU:
     def ccs_to_img_coord(self, X_ccs):
         """
         X_ccs: 4xN matrix contatining points in CCS
+        returns 2xN matrix containing image coordinates
         """
         Pimg_coord = np.matmul(self._K, X_ccs) 
         Pimg_coord = Pimg_coord[:2,:]/Pimg_coord[2,:]
@@ -64,9 +65,45 @@ class GeomPU:
         q_y = q%self._nqy
         return np.array([q_x, q_y])
 
+    def evaluate_grid(self, BEV_img):
+        h,w,c = BEV_img.shape
+        delta_x = np.int(h/self._nqx)
+        delta_y = np.int(w/self._nqy)
+        throttle_map = np.zeros((self._num_x))
+        trajectory_BEV = np.zeros((2,self._num_x))
+        trajectory_img = np.zeros((2,self._num_x))
+
+        for i in range(self._num_x):
+            # get average coordinates for each row
+            cands = 0
+            x_mid_BEV = 0
+            y_mid_BEV = 0
+            x_mid_img = 0
+            y_mid_img = 0
+            for j in range(self._num_y):
+                value = BEV_img[i*delta_x, j*delta_y]
+                if value == self._INDEX_FLOOR:
+                    cands = cands + 1
+                    throttle_map[i] = throttle_map[i] + 1
+                    x_mid_BEV = x_mid_BEV + i*delta_x
+                    y_mid_BEV = y_mid_BEV + j*delta_y
+                    # img points 
+                    index_in_grid_matrix = (i*self._num_y) + j
+                    point = self._grid_points[:,index_in_grid_matrix]
+                    x_mid_img = x_mid_img + point[0]
+                    y_mid_img = y_mid_img + point[1]
+            
+            trajectory_BEV[0,i] = x_mid_BEV/cands
+            trajectory_BEV[1,i] = y_mid_BEV/cands
+            trajectory_img[0,i] = x_mid_img/cands
+            trajectory_img[1,i] = y_mid_img/cands
+        
+        return throttle_map, trajectory_BEV, trajectory_img
+
+
     def get_square_points_img(self, qs):
         """
-        AUX/DEBUG function to draw overlays
+        SQUARES MODE Evaluates squares instead of grid points
         qs : tuple containing (q_x, q_y)
         returns the four image points corresponding to the square's corners 2x4
         """
@@ -79,6 +116,9 @@ class GeomPU:
         return square_corners
 
     def get_squares(self, BEV_img):
+        """
+        SQUARES MODE 
+        """
         squares = []
         h,w,c = BEV_img.shape
         delta_x = np.int(h/self._nqx)
@@ -140,4 +180,4 @@ class GeomPU:
 
 class ProcessingUnit:
     def __init__(self):
-        
+        print("")

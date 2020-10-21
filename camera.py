@@ -31,7 +31,6 @@ def eulerAnglesToRotationMatrix(theta):
 class Camera:
 
     def __init__(self, height = 480, width = 640):
-        
         # Intrinsics results obtained from calib module
         self._K = np.array([[676.74,0,317.4],[0,863.29,252.459],[0,0,1]])
         # Extrinisics
@@ -44,6 +43,9 @@ class Camera:
 
     def get_Rt(self):
         return self._Rt
+    
+    def get_K(self):
+        return self._K
 
     def get_frame_cv2(self):
         """

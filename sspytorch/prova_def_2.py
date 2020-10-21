@@ -10,27 +10,31 @@ from models.models import C1DeepSup
 import models.mobilenet as mobilenet
 from terri_utils import img_transform
 from terri_utils import round2nearest_multiple
+from lib.utils import as_numpy
 # For DC motor
 from adafruit_servokit import ServoKit # seteja el pinout a 1000 (GPIO.TEGRA_SOC)
 import RPi.GPIO as GPIO
-
+from camera import Camera
+from processing_unit import GeomPU
 # For csi camera
 from jetcam.csi_camera import CSICamera
 # For Servo motor
 import board
 import busio
 
-print("Aneu desconectant")
-for j in range(40):
-    print(40-j)
-    time.sleep(1)
+# print("Aneu desconectant")
+# for j in range(40):
+#     print(40-j)
+#     time.sleep(1)
 
 torch.cuda.set_device(0)
-camera = CSICamera(width=640, height=480)
 
-#print("Camera initialized")
-image = camera.read()
-cv2.imwrite('/home/dlinano/Pictures/pic1.jpeg', image)
+cam = Camera()
+grid_params = {'xw':0.6, 'yw':+0.25, 'length_x':1.0, 'length_y':0.50, 'num_x':7,'num_y':7}
+geompu = GeomPU(cam.get_K(), cam.get_Rt(),grid_params)
+
+image = cam.get_frame_cv2()
+# cv2.imwrite('/home/dlinano/Pictures/pic1.jpeg', image)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 img = Image.fromarray(image)
 ori_width, ori_height = img.size
@@ -55,9 +59,15 @@ with torch.no_grad():
                 torch.load(dec_weights, map_location='cuda:0'), strict=False)
     net_encoder = net_encoder.cuda(0)
     net_decoder = net_decoder.cuda(0)
-    for i in range(0,2):
-        auxi = net_encoder(img.cuda(0))
-        pred = net_decoder(auxi, segSize=(480, 640))
+    auxi = net_encoder(img.cuda(0))
+    pred = net_decoder(auxi, segSize=(480, 640))
+    scores = torch.zeros(1, 150, 480, 640).cuda(0) # 150 num class
+    scores = scores + pred/5
+    _, pred = torch.max(scores, dim=1)
+    pred = as_numpy(pred.squeeze(0).cpu())
+
+
+
 
 
 output_pin = "GPIO_PE6"

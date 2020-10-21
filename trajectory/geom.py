@@ -91,8 +91,8 @@ img = cv2.imread(img_path)
 xp = np.zeros((2,4))
 colors = [(255,255,255),(255,0,0),(0,255,0),(0,0,255)]
 
-num_x = 5
-num_y = 5
+num_x = 7
+num_y = 7
 grid_points = np.zeros((4,num_x*num_y))
 grid_points[3,:] = 1.0
 for a in range(num_x * num_y):
@@ -209,6 +209,61 @@ for c in candidates_each_row:
     # theres num_x-1 of these
     if(c[0]!=0.0):
         cv2.circle(img,(int(c[0]), int(c[1])), 7, (0,0,255))
-cv2.imshow('asdffdf', img)
+# cv2.imshow('asdffdf', img)
+# cv2.waitKey(0)
+# cv2.imwrite("./../imgs/grid_img_trajectory.jpeg", img)
+
+
+
+h,w,c = BEV_img.shape
+delta_x = np.int(h/num_x-1)
+delta_y = np.int(w/num_y-1)
+throttle_map = np.zeros((num_x))
+trajectory_BEV = np.zeros((2,num_x))
+trajectory_img = np.zeros((2,num_x))
+occ = np.ones((num_x,num_y))
+occ[0,0] = 0
+occ[0,1] = 0
+occ[1,0] = 0
+occ[2,0] = 0
+occ[3,0] = 0
+occ[1,1] = 0
+
+for i in range(num_x):
+    # get average coordinates for each row
+    cands = 0
+    x_mid_BEV = 0
+    y_mid_BEV = 0
+    x_mid_img = 0
+    y_mid_img = 0
+    for j in range(num_y):
+        value = BEV_img[i*delta_x, j*delta_y]
+        if occ[i,j]==1.0:
+            cands = cands + 1
+            throttle_map[i] = throttle_map[i] + 1
+            x_mid_BEV = x_mid_BEV + i*delta_x
+            y_mid_BEV = y_mid_BEV + j*delta_y
+            # img points 
+            index_in_grid_matrix = (i*num_y) + j
+            point = grid_points[:,index_in_grid_matrix]
+            x_mid_img = x_mid_img + point[0]
+            y_mid_img = y_mid_img + point[1]
+    
+    trajectory_BEV[0,i] = x_mid_BEV/cands
+    trajectory_BEV[1,i] = y_mid_BEV/cands
+    trajectory_img[0,i] = x_mid_img/cands
+    trajectory_img[1,i] = y_mid_img/cands
+
+
+print("Trajectory_BEV")
+print(trajectory_BEV)
+print("Trajectory Image")
+print(trajectory_img)
+print("Trhottle map")
+print(throttle_map)
+for i in range(num_x):
+    # theres num_x-1 of these
+    if(throttle_map[i]!=0.0):
+        cv2.circle(img,(int(trajectory_BEV[0,i]), int(trajectory_BEV[1,i])), 7, (0,0,255))
+cv2.imshow('asdffdf', BEV_img)
 cv2.waitKey(0)
-cv2.imwrite("./../imgs/grid_img_trajectory.jpeg", img)
