@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import cv2
 import time
+import matplotlib.pyplot as plt
 from torchvision import transforms
 from PIL import Image
 from dataset import imresize
@@ -34,12 +35,16 @@ grid_params = {'xw':0.6, 'yw':+0.25, 'length_x':1.0, 'length_y':0.50, 'num_x':7,
 geompu = GeomPU(cam.get_K(), cam.get_Rt(),grid_params)
 
 image = cam.get_frame_cv2()
-# cv2.imwrite('/home/dlinano/Pictures/pic1.jpeg', image)
+image_path = "/home/dlinano/Pictures/Terrinus/16.jpeg"
+image = cv2.imread(image_path)
+cv2.imwrite('/home/dlinano/Pictures/pic1.jpeg', image)
 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
 img = Image.fromarray(image)
 ori_width, ori_height = img.size
 
 # image transform, to torch float tensor 3xHxW
+img = imresize(img, (480,640))
 img = img_transform(img)
 img = torch.unsqueeze(img, 0)
 #print("img size = " + str(img.size()))
@@ -59,17 +64,27 @@ with torch.no_grad():
                 torch.load(dec_weights, map_location='cuda:0'), strict=False)
     net_encoder = net_encoder.cuda(0)
     net_decoder = net_decoder.cuda(0)
-    auxi = net_encoder(img.cuda(0))
+    auxi = net_encoder(img.cuda(0),return_feature_maps=True)
     pred = net_decoder(auxi, segSize=(480, 640))
     scores = torch.zeros(1, 150, 480, 640).cuda(0) # 150 num class
-    scores = scores + pred/5
+    scores = scores + pred
     _, pred = torch.max(scores, dim=1)
     pred = as_numpy(pred.squeeze(0).cpu())
-
-
-
-
-
+    pred = (pred==3)*pred
+    pred = np.uint8(pred)
+    BEV_img = geompu.create_BEV_image(pred)
+    throttle_map, trajectory_BEV, trajectory_img = geompu.evaluate_grid(BEV_img)
+    print("Throttle map:")
+    print(throttle_map)
+    print("Trajectory BEV")
+    print(trajectory_BEV)
+    print("Trajectory img")
+    print(trajectory_img)
+    for i in range(7):
+        cv2.circle(pred, (int(trajectory_img[0,i]), int(trajectory_img[1,i])), 5, (0,255,0),5)   
+    plt.imshow(pred)
+    plt.show()
+"""
 output_pin = "GPIO_PE6"
 if output_pin is None:
     raise Exception('PWM not supported on this board')
@@ -128,4 +143,4 @@ finally:
     GPIO.output(in2_pin, GPIO.LOW)
     GPIO.cleanup()
 
-
+"""
