@@ -1,7 +1,9 @@
 # jetson-nano-autonomous-car
 ## Results v0.0
-These results were obtained with the model MobileNetDilatedv2 - C1DeepSup
-![territest_22_mobilenetdilatedv2-c1deepsup_2_5secs](https://user-images.githubusercontent.com/29488113/71564560-9b0c0900-2a57-11ea-9d65-6714fe532121.jpeg)
+These results were obtained with the model MobileNetDilatedv2 - C1DeepSup, they were improved by fcn-resnet18 trained on SUN-RGBD dataset. 
+![territest_22_mobilenetdilatedv2-c1deepsup_2_5secs](https://user-images.githubusercontent.com/29488113/71564560-9b0c0900-2a57-11ea-9d65-6714fe532121.jpeg). https://github.com/CSAILVision/semantic-segmentation-pytorch Code on branch v0.0.
+
+Grid obtained from points
 
 ![GitHub Logo](/imgs/grid.jpeg)
 
@@ -10,6 +12,7 @@ Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in W
 ![equation](https://latex.codecogs.com/gif.latex?K%20%3D%20%5Cbegin%7Bpmatrix%7D%20676.74%20%26%200%20%26%20317.4%5C%5C%200%20%26%20863.29%20%26%20252.459%5C%5C%200%20%26%200%20%26%201%20%5Cend%7Bpmatrix%7D)
 
 Rotation matrix (World Coordinate System to Camera Coordinate System) WCS -> CCS, given by extrinsic rotation of the axis with angles X = 90, Y = 90, Z = 0.
+
 T indicates WCS expressed in CCS
 ![equation](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bpmatrix%7D%200.0%5C%5C%20-0.17%5C%5C%200.0%20%5Cend%7Bpmatrix%7D)
 
