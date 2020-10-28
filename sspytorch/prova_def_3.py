@@ -26,9 +26,6 @@ sudo python3 prova_def_3.py --input-flip=rotate-180 --input-width=640 --input-he
 
 """
 
-
-
-
 # HW
 output_pin = "GPIO_PE6"
 if output_pin is None:
@@ -124,10 +121,17 @@ opt = parser.parse_known_args()[0]
 camera = jetson.utils.videoSource('csi://0', argv=sys.argv)
 net = jetson.inference.segNet('fcn-resnet18-sun-640x512')
 buffers = segmentationBuffers(net,opt)
+
+# Disconnect
+print("Aneu desconectant")
+for j in range(45):
+    print(45-j)
+    time.sleep(1)
+
 try:
 
     iterations = 0
-    while(iterations<1):
+    while(iterations<700):
         image = camera.Capture()
         buffers.Alloc(image.shape, image.format)
         net.Process(image)
@@ -136,10 +140,10 @@ try:
         mask_np = jetson.utils.cudaToNumpy(mask)
         pred = mask_np[:,:,1]==128 # from segnet-console2.md jetson inference
         pred = np.uint8(pred)
-        plt.imshow(pred)
-        plt.show()
+        
         #cv2.imwrite("/home/dlinano/Pictures/exp_1_pred/{:03d}.jpeg".format(iterations), pred)
         BEV_img = geompu.create_BEV_image(pred)
+        
         throttle_map, trajectory_BEV, trajectory_img = geompu.evaluate_grid(BEV_img)
         throttle_weights = np.array([0.1,0.1,0.1,0.1,0.2,0.2,0.2])
         max_throt_val = 75
@@ -148,10 +152,11 @@ try:
         h,w = BEV_img.shape
         steering_ys = (trajectory_BEV[1,:]/w)*36.0
         final_steering = np.sum(steering_weights*steering_ys)
+        
         if final_steering > 18:
-            final_steering = final_steering*1.5
+            final_steering = final_steering*1.2
         elif final_steering < 18:
-            final_steering = final_steering*0.5
+            final_steering = final_steering*0.8
         kit.servo[0].angle = int(final_steering)
         p.ChangeDutyCycle(final_throttle)
         iterations = iterations + 1

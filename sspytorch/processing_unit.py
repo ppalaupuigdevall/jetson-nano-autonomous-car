@@ -18,7 +18,7 @@ class GeomPU:
         self._nqx = self._num_x - 1 # Number of squares per column
         self._nqy = self._num_y - 1 # number of squares per row
         self._grid_points = self.ccs_to_img_coord(self.wcs_to_ccs(self.generate_grid_world()))
-        self._INDEX_FLOOR = 3.0
+        self._INDEX_FLOOR = 1
         self._four_points_BEV = np.array([[self._xw + self._length_x, self._xw + self._length_x, self._xw,                 self._xw],\
                                           [self._yw,                  self._yw - self._length_y, self._yw - self._length_y, self._yw],\
                                           [0.0             ,          0.0             ,          0.0   ,                   0.0     ],\
