@@ -34,9 +34,10 @@ class Camera:
         # Intrinsics results obtained from calib module
         self._K = np.array([[676.74,0,317.4],[0,863.29,252.459],[0,0,1]])
         # Extrinisics
-        angles = np.array([90,90,0])*np.pi/180
+        #angles = np.array([90,90,0])*np.pi/180
+        angles = np.array([90,90,0])*np.pi/180   
         R = eulerAnglesToRotationMatrix(angles) # Rotation matrix  WCS->CCS
-        T = np.array([[0.0],[-0.156],[0.0]]) # WCS expressed in camera coordinate system 
+        T = np.array([[0.0],[-0.170],[0.0]]) # WCS expressed in camera coordinate system , before 0.15
         self._Rt = np.hstack((R,T))
         self._camera = CSICamera(width, height)
         print("Camera Initialized - Height = {}, Width = {}".format(height, width))

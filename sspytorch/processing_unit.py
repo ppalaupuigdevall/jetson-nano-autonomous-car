@@ -68,11 +68,10 @@ class GeomPU:
 
     def evaluate_grid(self, BEV_img):
         h,w = BEV_img.shape
-        print(h,w)
+        
         delta_x = np.int(h//self._nqx)
         delta_y = np.int(w//self._nqy)
-        print(delta_x)
-        print(delta_y)
+     
         throttle_map = np.zeros((self._num_x))
         trajectory_BEV = np.zeros((2,self._num_x))
         trajectory_img = np.zeros((2,self._num_x))
@@ -105,7 +104,7 @@ class GeomPU:
                     point = self._grid_points[:,index_in_grid_matrix]
                     x_mid_img = x_mid_img + point[0]
                     y_mid_img = y_mid_img + point[1]
-                    print(cands)
+                    
             if cands >0:
                     trajectory_BEV[0,i] = x_mid_BEV/cands
                     trajectory_BEV[1,i] = y_mid_BEV/cands

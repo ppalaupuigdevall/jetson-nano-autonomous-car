@@ -95,9 +95,7 @@ try:
         ori_width, ori_height = img.size
 
         # image transform, to torch float tensor 3xHxW
-        #img = imresize(img, (512,384)) # imresize is width,height
         img = imresize(img, (480,640))
-        #img = imresize(img, (640,480))
         img = img_transform(img)
         img = torch.unsqueeze(img, 0)
         #print("img size = " + str(img.size()))
@@ -114,9 +112,8 @@ try:
             net_encoder = net_encoder.cuda(0)
             net_decoder = net_decoder.cuda(0)
             auxi = net_encoder(img.cuda(0),return_feature_maps=True)
-            segSizee = (480,640)
-            pred = net_decoder(auxi, segSize=segSizee)
-            scores = torch.zeros(1, 150, segSizee[0], segSizee[1]).cuda(0) # 150 num class
+            pred = net_decoder(auxi, segSize=(480, 640))
+            scores = torch.zeros(1, 150, 480, 640).cuda(0) # 150 num class
             scores = scores + pred
             _, pred = torch.max(scores, dim=1)
             pred = as_numpy(pred.squeeze(0).cpu())
@@ -132,10 +129,6 @@ try:
             h,w = BEV_img.shape
             steering_ys = (trajectory_BEV[1,:]/w)*36.0
             final_steering = np.sum(steering_weights*steering_ys)
-            if final_steering > 18:
-                final_steering = final_steering*1.5
-            elif final_steering < 18:
-                final_steering = final_steering*0.5
             kit.servo[0].angle = int(final_steering)
             p.ChangeDutyCycle(final_throttle)
             iterations = iterations + 1
