@@ -50,26 +50,14 @@ with torch.no_grad():
                 num_class=150,
                 fc_dim=320,
                 use_softmax=True)
-
     dec_weights = "/home/dlinano/maweights/ade20k-mobilenetv2dilated-c1_deepsup/decoder_epoch_20.pth"
     net_decoder.load_state_dict(
                 torch.load(dec_weights, map_location='cuda:0'), strict=False)
     net_encoder = net_encoder.cuda(0)
     net_decoder = net_decoder.cuda(0)
-    print("Models creats")
     for i in range(0,2):
-        start_time = time.time()
-        #net_encoder_trt = torch2trt(net_encoder, [torch.ones((1,3,480,640)).cuda(0)])
-        #auxi = net_encoder_trt(img.cuda(0))
-
         auxi = net_encoder(img.cuda(0))
-        end_time = time.time()
-    
-        print("Time ENCODING = " + str(end_time - start_time))
-        start_time = time.time()
         pred = net_decoder(auxi, segSize=(480, 640))
-        end_time = time.time()
-        print("Time DECODING = " + str(end_time - start_time))
 
 
 output_pin = "GPIO_PE6"

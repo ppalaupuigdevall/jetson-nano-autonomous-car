@@ -41,7 +41,7 @@ def four_point_transform(image, pts):
     M = cv2.getPerspectiveTransform(np.float32(rect), np.float32(dst))
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
     # return the warped image
-    return warped
+    return warped,M
 
 # Calculates Rotation Matrix given euler angles.
 def eulerAnglesToRotationMatrix(theta):
@@ -77,31 +77,193 @@ T = np.array([[0.0],[-0.156],[0.0]]) # WCS expressed in camera coordinate system
 Rt = np.hstack((R,T))
 
 xworld = 0.6
-yworld = -0.16
+yworld = +0.25
 lengthx = 1.0
-lengthy = 2*-1*yworld
-# TODO: Define this according to lengthx and lengthy
-Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld, xworld          ], \
-               [yworld + lengthy, yworld          , yworld, yworld + lengthy], \
+lengthy = 2*yworld
+Xw = np.array([[xworld + lengthx, xworld + lengthx, xworld,           xworld],\
+               [yworld,           yworld - lengthy, yworld - lengthy, yworld],\
                [0.0             , 0.0             , 0.0   , 0.0             ],\
                [1.0             , 1.0             , 1.0   , 1.0             ]])
 
-print(Xw)
-img_path = "C:/Users/user/Ponc/terrinus/train/28.jpeg"
+
+img_path = "C:/Users/user/Ponc/terrinus/train/01.jpeg"
 img = cv2.imread(img_path)
-print(img.shape)
 xp = np.zeros((2,4))
+colors = [(255,255,255),(255,0,0),(0,255,0),(0,0,255)]
+
+num_x = 7
+num_y = 7
+grid_points = np.zeros((4,num_x*num_y))
+grid_points[3,:] = 1.0
+for a in range(num_x * num_y):
+    i = a//num_y
+    j = a%num_y
+    x = xworld + lengthx - ((i/(num_x-1))*lengthx)
+    y = yworld - ((j/(num_y-1))*lengthy)
+    grid_points[0, a] = x
+    grid_points[1, a] = y
+
+points_grid_cam_coord = np.matmul(Rt,grid_points)
+points_grid_img = np.matmul(K,points_grid_cam_coord)
+points_grid_img = points_grid_img[:2,:]/points_grid_img[2]
+points_grid_img = np.round(points_grid_img)
+print(points_grid_img.shape)
+print("fransecet")
+for i in range(num_x*num_y):
+    pccg = np.matmul(Rt,grid_points[:,i])
+    ximg_g = np.matmul(K,pccg)
+    ximg_g = ximg_g[:2]/ximg_g[2]
+    cv2.circle(img,(int(ximg_g[0]), int(ximg_g[1])), 5, (0,255,0))
+
 for i in range(4):
     pcc = np.matmul(Rt,Xw[:,i])
     ximg = np.matmul(K, pcc)
     ximg = ximg[:2]/ximg[2]
-    cv2.circle(img,(int(ximg[0]), int(ximg[1])), 5,(0,0,255))
-    print("Point in image = (", int(ximg[0]), ", ", int(ximg[1]), ")")
+    cv2.circle(img,(int(ximg[0]), int(ximg[1])), 5, (0,255,0))
+    # print("Point in image = (", int(ximg[0]), ", ", int(ximg[1]), ")")
     xp[:,i] = np.array([int(ximg[0]),int(ximg[1])])
-cv2.imshow('a', img)
+
+
+# cv2.imshow('a', img)
+# cv2.waitKey(0)
+
+BEV_img,M = four_point_transform(img, xp)
+# cv2.imshow('BEV', BEV_img)
+# # cv2.imwrite(r'C:\Users\user\Ponc\terrinus\grid.jpeg', img)
+# # cv2.imwrite(r'C:\Users\user\Ponc\terrinus\grid_BEV.jpeg', BEV_img)
+# cv2.waitKey(0)
+
+squares = []
+h,w,c = BEV_img.shape
+delta_x = np.int(h/(num_x-1))
+delta_y = np.int(w/(num_y-1))
+print("Image shape: ", h,w,c)
+print("Delta x: ",delta_x," delta_y = ",delta_y)
+occ = np.ones((num_x-1,num_y-1))
+occ[0,0] = 0
+occ[0,1] = 0
+occ[1,0] = 0
+occ[2,0] = 0
+occ[3,0] = 0
+occ[1,1] = 0
+candidates_each_row = []
+for i in range(num_x-1):
+    candidates = 0
+    x_mid = 0
+    y_mid = 0
+    for j in range(num_y-1):
+        print("i,j = ", i,j)
+        print("j*delta_y = ",j*delta_y)
+        square = BEV_img[i*delta_x:i*delta_x+delta_x,j*delta_y:j*delta_y+delta_y,:]
+        # process square
+        if(occ[i,j]==1):
+            mean_x = np.mean(np.array([i*delta_x, i*delta_x+delta_x]))
+            mean_y = np.mean(np.array([j*delta_y, j*delta_y+delta_y]))
+            candidates = candidates + 1
+            x_mid = x_mid + mean_x
+            y_mid = y_mid + mean_y
+    if(candidates==0):
+        candidates_each_row.append(-1)
+    else:
+        candidates_each_row.append((x_mid/candidates, y_mid/candidates))
+
+for c in candidates_each_row:
+    # theres num_x-1 of these
+    if(c!=-1):
+        cv2.circle(BEV_img,(int(c[1]), int(c[0])), 5, (0,0,255))
+cv2.imwrite("./../imgs/grid_BEV_trajectory.jpeg", BEV_img)
+cv2.imshow('asdf', BEV_img)
 cv2.waitKey(0)
 
+def get_square_points_img(qs, nqx, nqy,poins_grid_img):
+    """
+    AUX/DEBUG function to draw overlays
+    qs : tuple containing (q_x, q_y)
+    returns the four image points corresponding to the square's corners 2x4
+    """
+    q_x, q_y = qs
+    square_corners = np.zeros((2,4))
+    for i in range(4):
+        a_x, a_y = np.unravel_index(i, (2,2))
+        index_in_grid_matrix = (q_x + a_x)*(nqy + 1) + (q_y + a_y)
+        square_corners[:, i] = poins_grid_img[:,index_in_grid_matrix]
+    return square_corners
 
-BEV_img = four_point_transform(img, xp)
-cv2.imshow('BEV', BEV_img)
+candidates_each_row = []
+for i in range(num_x-1):
+    print(i, "-th ROW")
+    mitja_x = 0
+    candidates = 0
+    mitja_y = 0
+    for j in range(num_y-1):
+        if(occ[i,j]==1):
+            spoints = get_square_points_img((i,j),num_x-1,num_y-1,points_grid_img)
+            rata,ta = np.mean(spoints,axis=1)
+            print(rata,ta)
+            candidates = candidates + 1
+            mitja_x = mitja_x + rata
+            mitja_y = mitja_y + ta
+    candidates_each_row.append((mitja_x/candidates,mitja_y/candidates))
+print(candidates_each_row)
+for c in candidates_each_row:
+    # theres num_x-1 of these
+    if(c[0]!=0.0):
+        cv2.circle(img,(int(c[0]), int(c[1])), 7, (0,0,255))
+# cv2.imshow('asdffdf', img)
+# cv2.waitKey(0)
+# cv2.imwrite("./../imgs/grid_img_trajectory.jpeg", img)
+
+
+
+h,w,c = BEV_img.shape
+delta_x = np.int(h/num_x-1)
+delta_y = np.int(w/num_y-1)
+throttle_map = np.zeros((num_x))
+trajectory_BEV = np.zeros((2,num_x))
+trajectory_img = np.zeros((2,num_x))
+occ = np.ones((num_x,num_y))
+occ[0,0] = 0
+occ[0,1] = 0
+occ[1,0] = 0
+occ[2,0] = 0
+occ[3,0] = 0
+occ[1,1] = 0
+
+for i in range(num_x):
+    # get average coordinates for each row
+    cands = 0
+    x_mid_BEV = 0
+    y_mid_BEV = 0
+    x_mid_img = 0
+    y_mid_img = 0
+    for j in range(num_y):
+        value = BEV_img[i*delta_x, j*delta_y]
+        if occ[i,j]==1.0:
+            cands = cands + 1
+            throttle_map[i] = throttle_map[i] + 1
+            x_mid_BEV = x_mid_BEV + i*delta_x
+            y_mid_BEV = y_mid_BEV + j*delta_y
+            # img points 
+            index_in_grid_matrix = (i*num_y) + j
+            point = grid_points[:,index_in_grid_matrix]
+            x_mid_img = x_mid_img + point[0]
+            y_mid_img = y_mid_img + point[1]
+    
+    trajectory_BEV[0,i] = x_mid_BEV/cands
+    trajectory_BEV[1,i] = y_mid_BEV/cands
+    trajectory_img[0,i] = x_mid_img/cands
+    trajectory_img[1,i] = y_mid_img/cands
+
+
+print("Trajectory_BEV")
+print(trajectory_BEV)
+print("Trajectory Image")
+print(trajectory_img)
+print("Trhottle map")
+print(throttle_map)
+for i in range(num_x):
+    # theres num_x-1 of these
+    if(throttle_map[i]!=0.0):
+        cv2.circle(img,(int(trajectory_BEV[0,i]), int(trajectory_BEV[1,i])), 7, (0,0,255))
+cv2.imshow('asdffdf', BEV_img)
 cv2.waitKey(0)

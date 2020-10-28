@@ -92,7 +92,7 @@ class MobileNetV2(nn.Module):
             [6, 160, 3, 2],
             [6, 320, 1, 1],
         ]
-        print("MOBILE NET")
+        
         # building first layer
         assert input_size % 32 == 0
         input_channel = int(input_channel * width_mult)
