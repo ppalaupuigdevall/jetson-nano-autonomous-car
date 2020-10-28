@@ -7,23 +7,11 @@ These results were obtained with the model MobileNetDilatedv2 - C1DeepSup
 
 Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in WCS. 
 
-$$K = 
-\begin{array}{cc} 
- 676.74 & 0 & 317.4\\
-0 & 863.29 & 252.459\\
-0 & 0 & 1
-\end{array}
-$$ 
+![equation](https://latex.codecogs.com/gif.latex?K%20%3D%20%5Cbegin%7Bpmatrix%7D%20676.74%20%26%200%20%26%20317.4%5C%5C%200%20%26%20863.29%20%26%20252.459%5C%5C%200%20%26%200%20%26%201%20%5Cend%7Bpmatrix%7D)
 
 Rotation matrix (World Coordinate System to Camera Coordinate System) WCS -> CCS, given by extrinsic rotation of the axis with angles X = 90, Y = 90, Z = 0.
 T indicates WCS expressed in CCS
-$$T = 
-\begin{array}{cc} 
-0.0 \\
--0.17\\
-0.0
-\end{array}
-$$ 
+![equation](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bpmatrix%7D%200.0%5C%5C%20-0.17%5C%5C%200.0%20%5Cend%7Bpmatrix%7D)
 
 
 ![GitHub Logo](/imgs/grid_BEV.jpeg)
