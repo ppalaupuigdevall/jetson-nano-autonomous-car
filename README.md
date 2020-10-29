@@ -17,9 +17,14 @@ These results were obtained with the model MobileNetDilatedv2 - C1DeepSup (https
 
 ### Coordinate Systems
 
+![equation](https://latex.codecogs.com/gif.latex?K%20%3D%20%5Cbegin%7Bpmatrix%7D%20676.74%20%26%200%20%26%20317.4%5C%5C%200%20%26%20863.29%20%26%20252.459%5C%5C%200%20%26%200%20%26%201%20%5Cend%7Bpmatrix%7D)
+
+Rotation matrix (World Coordinate System to Camera Coordinate System) WCS -> CCS, given by extrinsic rotation of the axis with angles X = 90, Y = 90, Z = 0.
+
+T indicates WCS expressed in CCS
+![equation](https://latex.codecogs.com/gif.latex?T%20%3D%20%5Cbegin%7Bpmatrix%7D%200%5C%5C%20-0.17%5C%5C%200%20%5Cend%7Bpmatrix%7D)
+
 ![GitHub Logo](/imgs/terrinus_3d_model.PNG)
-
-
 
 Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in WCS.
 
@@ -28,12 +33,7 @@ Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in W
 ![GitHub Logo](/imgs/grid.jpeg)
 
 
-![equation](https://latex.codecogs.com/gif.latex?K%20%3D%20%5Cbegin%7Bpmatrix%7D%20676.74%20%26%200%20%26%20317.4%5C%5C%200%20%26%20863.29%20%26%20252.459%5C%5C%200%20%26%200%20%26%201%20%5Cend%7Bpmatrix%7D)
 
-Rotation matrix (World Coordinate System to Camera Coordinate System) WCS -> CCS, given by extrinsic rotation of the axis with angles X = 90, Y = 90, Z = 0.
-
-T indicates WCS expressed in CCS
-![equation](https://latex.codecogs.com/gif.latex?%5Cbegin%7Bpmatrix%7D%200.0%5C%5C%20-0.17%5C%5C%200.0%20%5Cend%7Bpmatrix%7D)
 
 
 ![GitHub Logo](/imgs/grid_BEV.jpeg)
