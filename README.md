@@ -15,9 +15,18 @@ These results were obtained with the model MobileNetDilatedv2 - C1DeepSup (https
  * H Bridge Motor Driver (https://www.arduino.cc/documents/datasheets/H-bridge_motor_driver.PDF)
  * Servo Driver with I2C interface (PCA9685)
 
+### Coordinate Systems
+
+![GitHub Logo](/imgs/terrinus_3d_model.PNG)
+
+
+
+Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in WCS.
+
+![GitHub Logo](/imgs/terrinus_BEV_3D.PNG)
+
 ![GitHub Logo](/imgs/grid.jpeg)
 
-Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in WCS. 
 
 ![equation](https://latex.codecogs.com/gif.latex?K%20%3D%20%5Cbegin%7Bpmatrix%7D%20676.74%20%26%200%20%26%20317.4%5C%5C%200%20%26%20863.29%20%26%20252.459%5C%5C%200%20%26%200%20%26%201%20%5Cend%7Bpmatrix%7D)
 
