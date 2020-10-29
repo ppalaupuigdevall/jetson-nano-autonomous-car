@@ -47,8 +47,10 @@ Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in W
 
 ## Setup
 Enable Pin 33 / PWM2
-´´´busybox devmem 0x70003248 32 0x46
-busybox devmem 0x6000d100 32 0x00´´´
+´´´
+busybox devmem 0x70003248 32 0x46
+busybox devmem 0x6000d100 32 0x00
+´´´
 
 
 ## Enllaços per fer memòria 
