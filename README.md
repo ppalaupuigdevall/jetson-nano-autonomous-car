@@ -1,9 +1,19 @@
 # jetson-nano-autonomous-car
 ## Results v0.0
-These results were obtained with the model MobileNetDilatedv2 - C1DeepSup, they were improved by fcn-resnet18 trained on SUN-RGBD dataset. 
-![territest_22_mobilenetdilatedv2-c1deepsup_2_5secs](https://user-images.githubusercontent.com/29488113/71564560-9b0c0900-2a57-11ea-9d65-6714fe532121.jpeg). https://github.com/CSAILVision/semantic-segmentation-pytorch Code on branch v0.0.
+These results were obtained with the model MobileNetDilatedv2 - C1DeepSup (https://github.com/CSAILVision/semantic-segmentation-pytorch) , they were improved by fcn-resnet18 trained on SUN-RGBD dataset  Code on branch v0.0 -> prova_def_2.py.
 
-Grid obtained from points
+![territest_22_mobilenetdilatedv2-c1deepsup_2_5secs](https://user-images.githubusercontent.com/29488113/71564560-9b0c0900-2a57-11ea-9d65-6714fe532121.jpeg)
+
+![Alt Text](/imgs/terrinus_v00_Trim_0.gif)
+
+### Hardware setup 
+
+ * Jetson Nano 4GB
+ * CSI Camera (Raspberry Pi V2)
+ * One Servo Motor (LongRunner SG90)
+ * LEGO DC Motor (https://www.lego.com/en-es/product/power-functions-l-motor-88003) 
+ * H Bridge Motor Driver (https://www.arduino.cc/documents/datasheets/H-bridge_motor_driver.PDF)
+ * Servo Driver with I2C interface (PCA9685)
 
 ![GitHub Logo](/imgs/grid.jpeg)
 
