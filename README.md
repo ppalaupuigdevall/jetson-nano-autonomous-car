@@ -25,7 +25,7 @@ T indicates WCS expressed in CCS
 
 ![equation](https://latex.codecogs.com/gif.latex?T%20%3D%20%5Cbegin%7Bpmatrix%7D%200%5C%5C%20-0.17%5C%5C%200%20%5Cend%7Bpmatrix%7D)
 
-<img src="/imgs/terrinus_3d_model.PNG" width="420" height="336"/> <img src="/imgs/terrinus_BEV_3D.PNG" width="420" height="336"/>
+<img src="/imgs/terrinus_3d_model.PNG" width="403" height="322"/> <img src="/imgs/terrinus_BEV_3D.PNG" width="403" height="322"/>
 
 ![GitHub Logo](/imgs/terrinus_3d_model.PNG)
 
