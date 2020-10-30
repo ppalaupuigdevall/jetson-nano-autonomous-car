@@ -27,25 +27,13 @@ T indicates WCS expressed in CCS
 
 <img src="/imgs/terrinus_3d_model.PNG" width="403" height="322"/> <img src="/imgs/terrinus_BEV_3D.PNG" width="403" height="322"/>
 
-![GitHub Logo](/imgs/terrinus_3d_model.PNG)
-
 Bird Eye View Image given Extrinsics and Intrinsics, defined by four points in WCS.
 
-![GitHub Logo](/imgs/terrinus_BEV_3D.PNG)
-
-![GitHub Logo](/imgs/grid.jpeg)
-
-
-
-
-
-![GitHub Logo](/imgs/grid_BEV.jpeg)
+<img src="/imgs/grid.jpeg" width="402" height="343"/> <img src="/imgs/grid_BEV.jpeg" width="403" height="160"/>
 
 #### Trajectory Estimation
 
-![GitHub Logo](/imgs/grid_BEV_trajectory.jpeg)
-
-![GitHub Logo](/imgs/grid_img_trajectory.jpeg)
+<img src="/imgs/grid_img_trajectory.jpeg" width="402" height="343"/> <img src="/imgs/grid_BEV_trajectory.jpeg" width="403" height="160"/>
 
 ## Setup
 Enable Pin 33 / PWM2
