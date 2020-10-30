@@ -73,6 +73,7 @@ K = np.array([[676.74,0,317.4],[0,863.29,252.459],[0,0,1]])
 # Extrinsics (mounting parameters)
 angles = np.array([90,90,0])*np.pi/180
 R = eulerAnglesToRotationMatrix(angles) # Rotation matrix  WCS->CCS
+print(R)
 T = np.array([[0.0],[-0.156],[0.0]]) # WCS expressed in camera coordinate system 
 Rt = np.hstack((R,T))
 

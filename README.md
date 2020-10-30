@@ -25,6 +25,8 @@ These results were obtained with the model MobileNetDilatedv2 - C1DeepSup (https
 
 Rotation matrix (World Coordinate System to Camera Coordinate System) WCS -> CCS, given by extrinsic rotation of the axis with angles X = 90, Y = 90, Z = 0.
 
+![equation](https://latex.codecogs.com/gif.latex?R%20%3D%20%5Cbegin%7Bpmatrix%7D%200%20%26%201%20%26%200%5C%5C%200%20%26%200%20%26%20-1%5C%5C%20-1%20%26%200%20%26%200%20%5Cend%7Bpmatrix%7D)
+
 T indicates WCS expressed in CCS
 
 ![equation](https://latex.codecogs.com/gif.latex?T%20%3D%20%5Cbegin%7Bpmatrix%7D%200%5C%5C%20-0.17%5C%5C%200%20%5Cend%7Bpmatrix%7D)
